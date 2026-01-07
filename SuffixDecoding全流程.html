@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SuffixDecoding 完整流程</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 40px 20px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            text-align: center;
+            padding: 22px 40px;
+            border-radius: 12px 12px 0 0;
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 2px;
+        }
+
+        .content {
+            background: white;
+            padding: 32px 28px;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .flow-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .step-box {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 14px 24px;
+            text-align: center;
+            position: relative;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .step-box.blue {
+            border-color: #93c5fd;
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        }
+
+        .step-box.orange {
+            border-color: #fed7aa;
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+        }
+
+        .step-box.green {
+            border-color: #86efac;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        }
+
+        .step-box.purple {
+            border-color: #c4b5fd;
+            background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+        }
+
+        .step-box.red {
+            border-color: #fca5a5;
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+        }
+
+        .step-box.teal {
+            border-color: #5eead4;
+            background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
+        }
+
+        .step-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .step-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .step-desc {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        /* 箭头 */
+        .arrow {
+            display: flex;
+            justify-content: center;
+            padding: 8px 0;
+        }
+
+        .arrow svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* 分支区域 */
+        .branch-section {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .branch-arrows {
+            display: flex;
+            justify-content: center;
+            width: 320px;
+            position: relative;
+            height: 40px;
+        }
+
+        .branch-arrows svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .branch-row {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            max-width: 420px;
+            justify-content: center;
+        }
+
+        .branch-box {
+            flex: 1;
+            max-width: 160px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .branch-box.fail {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+        }
+
+        .branch-box.success {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+        }
+
+        .branch-title {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .branch-box.fail .branch-title {
+            color: #dc2626;
+        }
+
+        .branch-box.success .branch-title {
+            color: #16a34a;
+        }
+
+        .branch-action {
+            font-size: 11px;
+            color: #64748b;
+        }
+
+        /* 合并箭头 */
+        .merge-arrow {
+            display: flex;
+            justify-content: center;
+            padding: 8px 0;
+            position: relative;
+            width: 320px;
+        }
+
+        .merge-arrow svg {
+            width: 100%;
+            height: 40px;
+        }
+
+        /* 终止节点 */
+        .end-box {
+            background: #f1f5f9;
+            border: 1px dashed #94a3b8;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 12px;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">SuffixDecoding 完整流程</div>
+        <div class="content">
+            <div class="flow-container">
+                <!-- 步骤 1 -->
+                <div class="step-box blue">
+                    <div class="step-label">步骤 1</div>
+                    <div class="step-title">提取模式</div>
+                    <div class="step-desc">当前序列 x₁:t → 取最后 p 个 token 作为模式</div>
+                </div>
+
+                <div class="arrow">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M12 4 L12 18 M7 14 L12 20 L17 14" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+
+                <!-- 步骤 2 -->
+                <div class="step-box orange">
+                    <div class="step-label">步骤 2</div>
+                    <div class="step-title">后缀树查找</div>
+                    <div class="step-desc">从根遍历 p 步，每步匹配一个 token</div>
+                </div>
+
+                <!-- 分支箭头 -->
+                <div class="branch-section">
+                    <div class="branch-arrows">
+                        <svg viewBox="0 0 320 40" fill="none">
+                            <path d="M160 0 L160 15 M160 15 L80 35 M160 15 L240 35" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="80" cy="35" r="3" fill="#94a3b8"/>
+                            <circle cx="240" cy="35" r="3" fill="#94a3b8"/>
+                        </svg>
+                    </div>
+
+                    <!-- 分支选项 -->
+                    <div class="branch-row">
+                        <div class="branch-box fail">
+                            <div class="branch-title">❌ 未找到</div>
+                            <div class="branch-action">标准解码（逐token）</div>
+                        </div>
+                        <div class="branch-box success">
+                            <div class="branch-title">✓ 找到了</div>
+                            <div class="branch-action">继续下一步</div>
+                        </div>
+                    </div>
+
+                    <!-- 合并箭头（只从右边下来） -->
+                    <div class="merge-arrow">
+                        <svg viewBox="0 0 320 40" fill="none">
+                            <path d="M240 5 L240 20 L160 35 L160 40" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- 步骤 3 -->
+                <div class="step-box green">
+                    <div class="step-label">步骤 3</div>
+                    <div class="step-title">获取所有候选续写</div>
+                    <div class="step-desc">收集目标节点的所有下降路径</div>
+                </div>
+
+                <div class="arrow">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M12 4 L12 18 M7 14 L12 20 L17 14" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+
+                <!-- 步骤 4 -->
+                <div class="step-box purple">
+                    <div class="step-label">步骤 4</div>
+                    <div class="step-title">贪婪扩展 + 评分</div>
+                    <div class="step-desc">从大量候选中选出"小而精"的推测树</div>
+                </div>
+
+                <div class="arrow">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M12 4 L12 18 M7 14 L12 20 L17 14" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+
+                <!-- 步骤 5 -->
+                <div class="step-box red">
+                    <div class="step-label">步骤 5</div>
+                    <div class="step-title">树形推测验证</div>
+                    <div class="step-desc">LLM 一次性验证推测树中的所有路径</div>
+                </div>
+
+                <div class="arrow">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M12 4 L12 18 M7 14 L12 20 L17 14" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+
+                <!-- 步骤 6 -->
+                <div class="step-box teal">
+                    <div class="step-label">步骤 6</div>
+                    <div class="step-title">接受 & 继续</div>
+                    <div class="step-desc">接受验证通过的 token，拒绝错误的，继续生成</div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>贪婪扩展和评分</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 40px 20px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            text-align: center;
+            padding: 20px 40px;
+            border-radius: 12px 12px 0 0;
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .content {
+            background: white;
+            padding: 30px;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .section {
+            margin-bottom: 24px;
+        }
+
+        .section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 16px;
+            background: #3b82f6;
+            margin-right: 10px;
+            border-radius: 2px;
+        }
+
+        .goal-box {
+            background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+            border: 1px solid #93c5fd;
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #1e40af;
+            font-weight: 500;
+        }
+
+        /* 新的图示区域 */
+        .transform-diagram {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .tree-section {
+            text-align: center;
+        }
+
+        .tree-label {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            padding: 4px 12px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .tree-label.orange {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .tree-label.green {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .tree-visual {
+            position: relative;
+            padding: 10px;
+        }
+
+        /* 原始候选树 - 使用 SVG */
+        .original-tree svg {
+            width: 140px;
+            height: 100px;
+        }
+
+        .refined-tree svg {
+            width: 140px;
+            height: 120px;
+        }
+
+        .arrow-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .arrow {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .arrow svg {
+            width: 40px;
+            height: 40px;
+        }
+
+        .tree-caption {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 8px;
+        }
+
+        .list-box {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+        }
+
+        .list-title {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .list-item {
+            color: #475569;
+            font-size: 13px;
+            padding: 4px 0;
+            padding-left: 16px;
+            position: relative;
+        }
+
+        .list-item::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #94a3b8;
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">贪婪扩展和评分 (Greedy Expansion & Scoring)</div>
+        <div class="content">
+            <!-- 目标 -->
+            <div class="goal-box">
+                <strong>目标：</strong>从大量候选中构建一棵"小而精"的推测树
+            </div>
+
+            <!-- 图示 -->
+            <div class="transform-diagram">
+                <!-- 原始候选 -->
+                <div class="tree-section">
+                    <div class="tree-label orange">原始候选（50条路径）</div>
+                    <div class="tree-visual original-tree">
+                        <svg viewBox="0 0 140 100">
+                            <!-- 顶部节点行 -->
+                            <rect x="10" y="10" width="12" height="16" rx="2" fill="#fbbf24" opacity="0.7"/>
+                            <rect x="26" y="10" width="12" height="16" rx="2" fill="#fbbf24" opacity="0.7"/>
+                            <rect x="42" y="10" width="12" height="16" rx="2" fill="#fbbf24" opacity="0.6"/>
+                            <rect x="58" y="10" width="12" height="16" rx="2" fill="#fbbf24" opacity="0.5"/>
+                            <rect x="74" y="10" width="12" height="16" rx="2" fill="#fbbf24" opacity="0.5"/>
+                            <rect x="90" y="10" width="12" height="16" rx="2" fill="#fbbf24" opacity="0.4"/>
+                            <rect x="106" y="10" width="12" height="16" rx="2" fill="#fbbf24" opacity="0.4"/>
+                            <rect x="122" y="10" width="12" height="16" rx="2" fill="#fbbf24" opacity="0.3"/>
+                            
+                            <!-- 连接线 -->
+                            <line x1="16" y1="26" x2="10" y2="45" stroke="#d97706" stroke-width="1.5" opacity="0.6"/>
+                            <line x1="16" y1="26" x2="22" y2="45" stroke="#d97706" stroke-width="1.5" opacity="0.6"/>
+                            <line x1="32" y1="26" x2="26" y2="45" stroke="#d97706" stroke-width="1.5" opacity="0.5"/>
+                            <line x1="32" y1="26" x2="38" y2="45" stroke="#d97706" stroke-width="1.5" opacity="0.5"/>
+                            <line x1="48" y1="26" x2="48" y2="45" stroke="#d97706" stroke-width="1.5" opacity="0.4"/>
+                            <line x1="64" y1="26" x2="64" y2="45" stroke="#d97706" stroke-width="1.5" opacity="0.4"/>
+                            <line x1="80" y1="26" x2="80" y2="45" stroke="#d97706" stroke-width="1.5" opacity="0.3"/>
+                            <line x1="96" y1="26" x2="96" y2="45" stroke="#d97706" stroke-width="1.5" opacity="0.3"/>
+                            <line x1="112" y1="26" x2="112" y2="45" stroke="#d97706" stroke-width="1.5" opacity="0.2"/>
+                            <line x1="128" y1="26" x2="128" y2="45" stroke="#d97706" stroke-width="1.5" opacity="0.2"/>
+                            
+                            <!-- 底部省略点 -->
+                            <circle cx="20" cy="60" r="2" fill="#94a3b8"/>
+                            <circle cx="35" cy="60" r="2" fill="#94a3b8"/>
+                            <circle cx="50" cy="60" r="2" fill="#94a3b8"/>
+                            <circle cx="65" cy="60" r="2" fill="#94a3b8"/>
+                            <circle cx="80" cy="60" r="2" fill="#94a3b8"/>
+                            <circle cx="95" cy="60" r="2" fill="#94a3b8"/>
+                            <circle cx="110" cy="60" r="2" fill="#94a3b8"/>
+                            <circle cx="125" cy="60" r="2" fill="#94a3b8"/>
+                            
+                            <!-- 更多省略点 -->
+                            <circle cx="45" cy="75" r="1.5" fill="#cbd5e1"/>
+                            <circle cx="55" cy="75" r="1.5" fill="#cbd5e1"/>
+                            <circle cx="65" cy="75" r="1.5" fill="#cbd5e1"/>
+                            <circle cx="75" cy="75" r="1.5" fill="#cbd5e1"/>
+                            <circle cx="85" cy="75" r="1.5" fill="#cbd5e1"/>
+                            <circle cx="95" cy="75" r="1.5" fill="#cbd5e1"/>
+                        </svg>
+                    </div>
+                    <div class="tree-caption">（50条路径）</div>
+                </div>
+
+                <!-- 箭头 -->
+                <div class="arrow-container">
+                    <div class="arrow">
+                        <svg viewBox="0 0 40 40">
+                            <defs>
+                                <linearGradient id="arrowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" style="stop-color:#fbbf24"/>
+                                    <stop offset="100%" style="stop-color:#10b981"/>
+                                </linearGradient>
+                            </defs>
+                            <path d="M5 20 L28 20 M22 14 L30 20 L22 26" stroke="url(#arrowGrad)" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- 精简后的树 -->
+                <div class="tree-section">
+                    <div class="tree-label green">精简后的推测树（5条路径）</div>
+                    <div class="tree-visual refined-tree">
+                        <svg viewBox="0 0 140 120">
+                            <!-- 根节点 -->
+                            <rect x="58" y="8" width="24" height="18" rx="4" fill="#10b981"/>
+                            
+                            <!-- 第一层连接线 -->
+                            <line x1="70" y1="26" x2="35" y2="48" stroke="#10b981" stroke-width="2"/>
+                            <line x1="70" y1="26" x2="70" y2="48" stroke="#10b981" stroke-width="2"/>
+                            <line x1="70" y1="26" x2="105" y2="48" stroke="#10b981" stroke-width="2"/>
+                            
+                            <!-- 第一层节点 -->
+                            <rect x="23" y="48" width="24" height="18" rx="4" fill="#34d399"/>
+                            <rect x="58" y="48" width="24" height="18" rx="4" fill="#34d399"/>
+                            <rect x="93" y="48" width="24" height="18" rx="4" fill="#34d399"/>
+                            
+                            <!-- 节点文字 -->
+                            <text x="35" y="60" font-size="9" fill="white" text-anchor="middle" font-weight="500">选1</text>
+                            <text x="70" y="60" font-size="9" fill="white" text-anchor="middle" font-weight="500">选2</text>
+                            <text x="105" y="60" font-size="9" fill="white" text-anchor="middle" font-weight="500">选3</text>
+                            
+                            <!-- 第二层连接线 -->
+                            <line x1="35" y1="66" x2="35" y2="88" stroke="#10b981" stroke-width="2"/>
+                            <line x1="70" y1="66" x2="70" y2="88" stroke="#10b981" stroke-width="2"/>
+                            
+                            <!-- 第二层节点 -->
+                            <rect x="23" y="88" width="24" height="18" rx="4" fill="#6ee7b7"/>
+                            <rect x="58" y="88" width="24" height="18" rx="4" fill="#6ee7b7"/>
+                            
+                            <!-- 第二层文字 -->
+                            <text x="35" y="100" font-size="8" fill="#065f46" text-anchor="middle" font-weight="500">选1a</text>
+                            <text x="70" y="100" font-size="8" fill="#065f46" text-anchor="middle" font-weight="500">选2a</text>
+                        </svg>
+                    </div>
+                    <div class="tree-caption">（5条路径）</div>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- 如何选择 -->
+            <div class="section">
+                <div class="section-title">如何选择？</div>
+                
+                <div class="list-box">
+                    <div class="list-title">评分标准（可能包括）：</div>
+                    <div class="list-item">该路径在历史中出现的频率</div>
+                    <div class="list-item">路径长度（更长 = 更大收益）</div>
+                    <div class="list-item">置信度估计</div>
+                </div>
+
+                <div class="list-box">
+                    <div class="list-title">贪婪扩展：</div>
+                    <div class="list-item">每次选最高分的分支扩展</div>
+                    <div class="list-item">直到达到预算（如最多 K 个节点）</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
