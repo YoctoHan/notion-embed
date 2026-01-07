@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我们已经完成的事</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 640px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            text-align: center;
+            padding: 20px 40px;
+            border-radius: 12px 12px 0 0;
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 2px;
+        }
+
+        .content {
+            background: white;
+            padding: 28px;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .step-list {
+            margin-bottom: 24px;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 12px 16px;
+            background: #f8fafc;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .step-item:nth-child(2) {
+            border-left-color: #f59e0b;
+        }
+
+        .step-item:nth-child(3) {
+            border-left-color: #10b981;
+        }
+
+        .step-number {
+            font-weight: 700;
+            color: #3b82f6;
+            margin-right: 8px;
+            white-space: nowrap;
+        }
+
+        .step-item:nth-child(2) .step-number {
+            color: #f59e0b;
+        }
+
+        .step-item:nth-child(3) .step-number {
+            color: #10b981;
+        }
+
+        .step-text {
+            color: #334155;
+            font-size: 14px;
+        }
+
+        .callout {
+            display: flex;
+            align-items: flex-start;
+            padding: 14px 18px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+
+        .callout.warning {
+            background: #fffbeb;
+            border: 1px solid #fcd34d;
+        }
+
+        .callout.success {
+            background: #f0fdf4;
+            border: 1px solid #86efac;
+        }
+
+        .callout-icon {
+            font-size: 18px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .callout-content {
+            flex: 1;
+        }
+
+        .callout-label {
+            font-weight: 600;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        .callout.warning .callout-label {
+            color: #b45309;
+        }
+
+        .callout.success .callout-label {
+            color: #15803d;
+        }
+
+        .callout-text {
+            font-size: 14px;
+            color: #475569;
+        }
+
+        .callout-text code {
+            background: rgba(0,0,0,0.06);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">我们已经完成的事</div>
+        <div class="content">
+            <!-- 步骤列表 -->
+            <div class="step-list">
+                <div class="step-item">
+                    <span class="step-number">步骤1:</span>
+                    <span class="step-text">提取模式序列 <span class="latex" data-formula="x_{t-p+1:t}"></span>（最后 p 个 token）</span>
+                </div>
+                <div class="step-item">
+                    <span class="step-number">步骤2:</span>
+                    <span class="step-text">在后缀树中遍历 p 步，找到节点 <span class="latex" data-formula="N_p"></span></span>
+                </div>
+                <div class="step-item">
+                    <span class="step-number">步骤3:</span>
+                    <span class="step-text"><span class="latex" data-formula="N_p"></span> 的所有下降路径 = 所有可能的续写</span>
+                </div>
+            </div>
+
+            <!-- 问题 -->
+            <div class="callout warning">
+                <span class="callout-icon">⚠️</span>
+                <div class="callout-content">
+                    <div class="callout-label">问题</div>
+                    <div class="callout-text">下降路径可能有几十甚至上百条！</div>
+                </div>
+            </div>
+
+            <!-- 目标 -->
+            <div class="callout success">
+                <span class="callout-icon">✅</span>
+                <div class="callout-content">
+                    <div class="callout-label">目标</div>
+                    <div class="callout-text">从中选出一棵"小而精"的推测子树，大小限制为 <code>MAX_SPEC</code> 个节点</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.latex').forEach(el => {
+            const formula = el.getAttribute('data-formula');
+            katex.render(formula, el, { throwOnError: false });
+        });
+    </script>
+</body>
+</html>

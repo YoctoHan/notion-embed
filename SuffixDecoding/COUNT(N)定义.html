@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COUNT(N) = 节点出现次数</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            text-align: center;
+            padding: 20px 40px;
+            border-radius: 12px 12px 0 0;
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            font-family: 'Monaco', 'Menlo', monospace;
+        }
+
+        .content {
+            background: white;
+            padding: 28px;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .intro {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            font-size: 14px;
+            color: #334155;
+            line-height: 1.8;
+        }
+
+        .intro-item {
+            margin-bottom: 4px;
+        }
+
+        .intro-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 16px;
+            background: #3b82f6;
+            margin-right: 10px;
+            border-radius: 2px;
+        }
+
+        .section-title.orange::before {
+            background: #f59e0b;
+        }
+
+        .corpus-box {
+            background: #1e293b;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 13px;
+        }
+
+        .corpus-line {
+            color: #a5f3fc;
+            padding: 4px 0;
+        }
+
+        .corpus-line::before {
+            content: '"';
+            color: #64748b;
+        }
+
+        .corpus-line::after {
+            content: '"';
+            color: #64748b;
+        }
+
+        /* 树形图 */
+        .tree-container {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 24px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .tree-svg {
+            width: 100%;
+            max-width: 480px;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">COUNT(N) = 节点出现次数</div>
+        <div class="content">
+            <!-- 介绍 -->
+            <div class="intro">
+                <div class="intro-item">• 后缀树是从参考语料库构建的</div>
+                <div class="intro-item">• 每个节点对应一个 token 序列</div>
+                <div class="intro-item">• <strong>COUNT(N)</strong> = 这个序列在语料库中出现了多少次</div>
+            </div>
+
+            <!-- 示例语料库 -->
+            <div class="section-title">示例语料库</div>
+            <div class="corpus-box">
+                <div class="corpus-line">return x + 1</div>
+                <div class="corpus-line">return x + 2</div>
+                <div class="corpus-line">return x * 3</div>
+                <div class="corpus-line">return y + 1</div>
+            </div>
+
+            <!-- 后缀树片段 -->
+            <div class="section-title orange">后缀树片段</div>
+            <div class="tree-container">
+                <svg class="tree-svg" viewBox="0 0 480 340" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- 第一层: return -->
+                    <rect x="190" y="10" width="100" height="44" rx="8" fill="#3b82f6"/>
+                    <text x="240" y="30" font-size="13" fill="white" text-anchor="middle" font-weight="600" font-family="Monaco, Menlo, monospace">"return"</text>
+                    <text x="240" y="46" font-size="10" fill="#bfdbfe" text-anchor="middle" font-family="Monaco, Menlo, monospace">COUNT = 4</text>
+
+                    <!-- 连接线: return -> x, y -->
+                    <path d="M220 54 L140 90" stroke="#94a3b8" stroke-width="2"/>
+                    <path d="M260 54 L340 90" stroke="#94a3b8" stroke-width="2"/>
+
+                    <!-- 第二层: x, y -->
+                    <rect x="90" y="90" width="100" height="44" rx="8" fill="#f59e0b"/>
+                    <text x="140" y="110" font-size="13" fill="white" text-anchor="middle" font-weight="600" font-family="Monaco, Menlo, monospace">"x"</text>
+                    <text x="140" y="126" font-size="10" fill="#fef3c7" text-anchor="middle" font-family="Monaco, Menlo, monospace">COUNT = 3</text>
+
+                    <rect x="290" y="90" width="100" height="44" rx="8" fill="#10b981"/>
+                    <text x="340" y="110" font-size="13" fill="white" text-anchor="middle" font-weight="600" font-family="Monaco, Menlo, monospace">"y"</text>
+                    <text x="340" y="126" font-size="10" fill="#d1fae5" text-anchor="middle" font-family="Monaco, Menlo, monospace">COUNT = 1</text>
+
+                    <!-- 连接线: x -> +, * -->
+                    <path d="M120 134 L70 170" stroke="#94a3b8" stroke-width="2"/>
+                    <path d="M160 134 L180 170" stroke="#94a3b8" stroke-width="2"/>
+                    
+                    <!-- 连接线: y -> + -->
+                    <path d="M340 134 L380 170" stroke="#94a3b8" stroke-width="2"/>
+
+                    <!-- 第三层: +, *, + -->
+                    <rect x="30" y="170" width="80" height="44" rx="8" fill="#8b5cf6"/>
+                    <text x="70" y="190" font-size="13" fill="white" text-anchor="middle" font-weight="600" font-family="Monaco, Menlo, monospace">"+"</text>
+                    <text x="70" y="206" font-size="10" fill="#e9d5ff" text-anchor="middle" font-family="Monaco, Menlo, monospace">COUNT = 2</text>
+
+                    <rect x="140" y="170" width="80" height="44" rx="8" fill="#ec4899"/>
+                    <text x="180" y="190" font-size="13" fill="white" text-anchor="middle" font-weight="600" font-family="Monaco, Menlo, monospace">"*"</text>
+                    <text x="180" y="206" font-size="10" fill="#fce7f3" text-anchor="middle" font-family="Monaco, Menlo, monospace">COUNT = 1</text>
+
+                    <rect x="340" y="170" width="80" height="44" rx="8" fill="#8b5cf6"/>
+                    <text x="380" y="190" font-size="13" fill="white" text-anchor="middle" font-weight="600" font-family="Monaco, Menlo, monospace">"+"</text>
+                    <text x="380" y="206" font-size="10" fill="#e9d5ff" text-anchor="middle" font-family="Monaco, Menlo, monospace">COUNT = 1</text>
+
+                    <!-- 连接线: + -> 1, 2 -->
+                    <path d="M50 214 L30 250" stroke="#94a3b8" stroke-width="2"/>
+                    <path d="M90 214 L100 250" stroke="#94a3b8" stroke-width="2"/>
+                    
+                    <!-- 连接线: * -> 3 -->
+                    <path d="M180 214 L180 250" stroke="#94a3b8" stroke-width="2"/>
+                    
+                    <!-- 连接线: + -> 1 (右边) -->
+                    <path d="M380 214 L380 250" stroke="#94a3b8" stroke-width="2"/>
+
+                    <!-- 第四层: 1, 2, 3, 1 -->
+                    <rect x="5" y="250" width="60" height="40" rx="6" fill="#64748b"/>
+                    <text x="35" y="268" font-size="12" fill="white" text-anchor="middle" font-weight="600" font-family="Monaco, Menlo, monospace">"1"</text>
+                    <text x="35" y="282" font-size="9" fill="#cbd5e1" text-anchor="middle" font-family="Monaco, Menlo, monospace">C = 1</text>
+
+                    <rect x="75" y="250" width="60" height="40" rx="6" fill="#64748b"/>
+                    <text x="105" y="268" font-size="12" fill="white" text-anchor="middle" font-weight="600" font-family="Monaco, Menlo, monospace">"2"</text>
+                    <text x="105" y="282" font-size="9" fill="#cbd5e1" text-anchor="middle" font-family="Monaco, Menlo, monospace">C = 1</text>
+
+                    <rect x="150" y="250" width="60" height="40" rx="6" fill="#64748b"/>
+                    <text x="180" y="268" font-size="12" fill="white" text-anchor="middle" font-weight="600" font-family="Monaco, Menlo, monospace">"3"</text>
+                    <text x="180" y="282" font-size="9" fill="#cbd5e1" text-anchor="middle" font-family="Monaco, Menlo, monospace">C = 1</text>
+
+                    <rect x="350" y="250" width="60" height="40" rx="6" fill="#64748b"/>
+                    <text x="380" y="268" font-size="12" fill="white" text-anchor="middle" font-weight="600" font-family="Monaco, Menlo, monospace">"1"</text>
+                    <text x="380" y="282" font-size="9" fill="#cbd5e1" text-anchor="middle" font-family="Monaco, Menlo, monospace">C = 1</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
