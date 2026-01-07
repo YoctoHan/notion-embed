@@ -128,10 +128,30 @@
             line-height: 1.6;
         }
 
+        /* Page sections */
+        .page-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            padding-left: 4px;
+        }
+
+        .section-icon {
+            font-size: 1.1rem;
+        }
+
         /* Page list */
         .page-list {
             display: grid;
-            gap: 20px;
+            gap: 16px;
         }
 
         .page-card {
@@ -147,14 +167,16 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
+        }
+
+        .page-section {
             animation: fadeInUp 0.6s ease-out backwards;
         }
 
-        .page-card:nth-child(1) { animation-delay: 0.1s; }
-        .page-card:nth-child(2) { animation-delay: 0.2s; }
-        .page-card:nth-child(3) { animation-delay: 0.3s; }
-        .page-card:nth-child(4) { animation-delay: 0.4s; }
-        .page-card:nth-child(5) { animation-delay: 0.5s; }
+        .page-section:nth-child(2) { animation-delay: 0.1s; }
+        .page-section:nth-child(3) { animation-delay: 0.2s; }
+        .page-section:nth-child(4) { animation-delay: 0.3s; }
+        .page-section:nth-child(5) { animation-delay: 0.4s; }
 
         .page-card::before {
             content: '';
@@ -325,26 +347,31 @@
             <p class="subtitle">用于嵌入 Notion 的交互式可视化组件，帮助更好地理解复杂概念</p>
         </header>
 
-        <div class="page-list">
-            <a href="SuffixDecoding/符号定义.html" class="page-card" data-accent="cyan">
-                <div class="page-icon">📐</div>
-                <div class="page-info">
-                    <div class="page-title">SuffixDecoding符号定义</div>
-                    <div class="page-desc">SuffixDecoding符号定义</div>
-                </div>
-                <div class="page-arrow">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
-                    </svg>
-                </div>
-            </a>
-
+        <!-- 基础概念 -->
+        <section class="page-section">
+            <h2 class="section-title">
+                <span class="section-icon">📚</span>
+                基础概念
+            </h2>
             <div class="page-list">
-                <a href="SuffixDecoding/后缀树遍历示例.html" class="page-card" data-accent="cyan">
+                <a href="SuffixDecoding/符号定义.html" class="page-card" data-accent="cyan">
                     <div class="page-icon">📐</div>
+                    <div class="page-info">
+                        <div class="page-title">符号定义</div>
+                        <div class="page-desc">SuffixDecoding 中使用的基本符号和术语</div>
+                    </div>
+                    <div class="page-arrow">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </a>
+
+                <a href="SuffixDecoding/后缀树遍历示例.html" class="page-card" data-accent="cyan">
+                    <div class="page-icon">🌳</div>
                     <div class="page-info">
                         <div class="page-title">后缀树遍历示例</div>
-                        <div class="page-desc">后缀树遍历示例</div>
+                        <div class="page-desc">理解后缀树的结构和遍历方式</div>
                     </div>
                     <div class="page-arrow">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -353,12 +380,33 @@
                     </div>
                 </a>
 
-            <div class="page-list">
                 <a href="SuffixDecoding/模式匹配流程.html" class="page-card" data-accent="cyan">
-                    <div class="page-icon">📐</div>
+                    <div class="page-icon">🔍</div>
                     <div class="page-info">
                         <div class="page-title">模式匹配流程</div>
-                        <div class="page-desc">模式匹配流程</div>
+                        <div class="page-desc">如何在后缀树中进行模式匹配</div>
+                    </div>
+                    <div class="page-arrow">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- 核心公式 -->
+        <section class="page-section">
+            <h2 class="section-title">
+                <span class="section-icon">📊</span>
+                核心公式
+            </h2>
+            <div class="page-list">
+                <a href="SuffixDecoding/COUNT(N)定义.html" class="page-card" data-accent="emerald">
+                    <div class="page-icon">#</div>
+                    <div class="page-info">
+                        <div class="page-title">COUNT(N) 定义</div>
+                        <div class="page-desc">节点出现次数的统计方法</div>
                     </div>
                     <div class="page-arrow">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -367,12 +415,72 @@
                     </div>
                 </a>
 
+                <a href="SuffixDecoding/C(N)定义.html" class="page-card" data-accent="amber">
+                    <div class="page-icon">C</div>
+                    <div class="page-info">
+                        <div class="page-title">C(N) 定义</div>
+                        <div class="page-desc">局部转移概率 — 从父节点到 N 的概率</div>
+                    </div>
+                    <div class="page-arrow">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </a>
+
+                <a href="SuffixDecoding/D(N)定义.html" class="page-card" data-accent="cyan">
+                    <div class="page-icon">D</div>
+                    <div class="page-info">
+                        <div class="page-title">D(N) 定义</div>
+                        <div class="page-desc">全局路径概率 — 从起点到 N 的累积概率</div>
+                    </div>
+                    <div class="page-arrow">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </a>
+
+                <a href="SuffixDecoding/两个指标的对比.html" class="page-card" data-accent="rose">
+                    <div class="page-icon">⚖️</div>
+                    <div class="page-info">
+                        <div class="page-title">C(N) vs D(N) 对比</div>
+                        <div class="page-desc">局部概率与全局概率的区别，为什么用 D 选择节点</div>
+                    </div>
+                    <div class="page-arrow">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </a>
+
+                <a href="SuffixDecoding/核心公式记忆卡片.html" class="page-card" data-accent="emerald">
+                    <div class="page-icon">🃏</div>
+                    <div class="page-info">
+                        <div class="page-title">核心公式记忆卡片</div>
+                        <div class="page-desc">COUNT / C / D / 贪婪扩展公式速查</div>
+                    </div>
+                    <div class="page-arrow">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- 算法详解 -->
+        <section class="page-section">
+            <h2 class="section-title">
+                <span class="section-icon">⚙️</span>
+                算法详解
+            </h2>
             <div class="page-list">
-                <a href="SuffixDecoding/贪婪扩展和评分.html" class="page-card" data-accent="cyan">
-                    <div class="page-icon">📐</div>
+                <a href="SuffixDecoding/贪婪扩展和评分.html" class="page-card" data-accent="amber">
+                    <div class="page-icon">📈</div>
                     <div class="page-info">
                         <div class="page-title">贪婪扩展和评分</div>
-                        <div class="page-desc">贪婪扩展和评分</div>
+                        <div class="page-desc">如何选择和扩展推测树节点</div>
                     </div>
                     <div class="page-arrow">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -381,12 +489,11 @@
                     </div>
                 </a>
 
-            <div class="page-list">
-                <a href="SuffixDecoding/SuffixDecoding全流程.html" class="page-card" data-accent="cyan">
-                    <div class="page-icon">📐</div>
+                <a href="SuffixDecoding/一个简单的示例.html" class="page-card" data-accent="emerald">
+                    <div class="page-icon">📝</div>
                     <div class="page-info">
-                        <div class="page-title">SuffixDecoding全流程</div>
-                        <div class="page-desc">SuffixDecoding全流程</div>
+                        <div class="page-title">贪婪扩展算法示例</div>
+                        <div class="page-desc">通过完整示例理解算法每一步的执行过程</div>
                     </div>
                     <div class="page-arrow">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -394,118 +501,56 @@
                         </svg>
                     </div>
                 </a>
-            
-            <div class="page-list">
-                <a href="SuffixDecoding/为什么要做树压缩.html" class="page-card" data-accent="cyan">
-                    <div class="page-icon">📐</div>
-                    <div class="page-info">
-                        <div class="page-title">为什么要做树压缩</div>
-                        <div class="page-desc">为什么要做树压缩</div>
-                    </div>
-                    <div class="page-arrow">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </div>
-                </a>
-            </div>
-            
-            <div class="page-list">
-                <a href="SuffixDecoding/COUNT(N)定义.html" class="page-card" data-accent="cyan">
-                    <div class="page-icon">📐</div>
-                    <div class="page-info">
-                        <div class="page-title">COUNT(N)定义</div>
-                        <div class="page-desc">COUNT(N)定义</div>
-                        </div>
-                        <div class="page-arrow">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M5 12h14M12 5l7 7-7 7"/>
-                            </svg>
-                        </div>
-                    </a>
-                </div>
-            </div>
-            
-            <div class="page-list">
-                <a href="SuffixDecoding/C(N)定义.html" class="page-card" data-accent="cyan">
-                    <div class="page-icon">📐</div>
-                    <div class="page-info">
-                        <div class="page-title">C(N)定义</div>
-                        <div class="page-desc">C(N)定义</div>
-                        </div>
-                        <div class="page-arrow">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M5 12h14M12 5l7 7-7 7"/>
-                            </svg>
-                        </div>
-                    </a>
-                </div>
-            </div>
-            
-            <div class="page-list">
-                <a href="SuffixDecoding/D(N)定义.html" class="page-card" data-accent="cyan">
-                    <div class="page-icon">📐</div>
-                    <div class="page-info">
-                        <div class="page-title">D(N)定义</div>
-                        <div class="page-desc">D(N)定义</div>
-                        </div>
-                        <div class="page-arrow">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M5 12h14M12 5l7 7-7 7"/>
-                            </svg>
-                        </div>
-                    </a>
-                </div>
-            </div>
-            
-            <div class="page-list">
-                <a href="SuffixDecoding/一个简单的示例.html" class="page-card" data-accent="cyan">
-                    <div class="page-icon">📐</div>
-                    <div class="page-info">
-                        <div class="page-title">一个简单的示例</div>
-                        <div class="page-desc">一个简单的示例</div>
-                        </div>
-                        <div class="page-arrow">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M5 12h14M12 5l7 7-7 7"/>
-                            </svg>
-                        </div>
-                    </a>
-                </div>
-            </div>
-            
-            <div class="page-list">
-                <a href="SuffixDecoding/核心洞察.html" class="page-card" data-accent="cyan">
-                    <div class="page-icon">📐</div>
+
+                <a href="SuffixDecoding/核心洞察.html" class="page-card" data-accent="rose">
+                    <div class="page-icon">💡</div>
                     <div class="page-info">
                         <div class="page-title">核心洞察</div>
-                        <div class="page-desc">核心洞察</div>
-                        </div>
-                        <div class="page-arrow">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M5 12h14M12 5l7 7-7 7"/>
-                            </svg>
-                        </div>
-                    </a>
-                </div>
-            </div>
+                        <div class="page-desc">D 值贪婪策略的直觉理解和与其他策略的对比</div>
+                    </div>
+                    <div class="page-arrow">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </a>
 
-            <!-- 更多页面可以按照下面的模板添加 -->
-            <!--
-            <a href="your-page.html" class="page-card" data-accent="emerald">
-                <div class="page-icon">🎯</div>
-                <div class="page-info">
-                    <div class="page-title">页面标题</div>
-                    <div class="page-desc">页面描述</div>
-                </div>
-                <div class="page-arrow">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
-                    </svg>
-                </div>
-            </a>
-            -->
-        </div>
+                <a href="SuffixDecoding/为什么要做树压缩.html" class="page-card" data-accent="cyan">
+                    <div class="page-icon">🗜️</div>
+                    <div class="page-info">
+                        <div class="page-title">为什么要做树压缩</div>
+                        <div class="page-desc">后缀树压缩的必要性和方法</div>
+                    </div>
+                    <div class="page-arrow">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- 完整流程 -->
+        <section class="page-section">
+            <h2 class="section-title">
+                <span class="section-icon">🎯</span>
+                完整流程
+            </h2>
+            <div class="page-list">
+                <a href="SuffixDecoding/SuffixDecoding全流程.html" class="page-card" data-accent="rose">
+                    <div class="page-icon">🚀</div>
+                    <div class="page-info">
+                        <div class="page-title">SuffixDecoding 全流程</div>
+                        <div class="page-desc">从输入到输出的完整算法流程图</div>
+                    </div>
+                    <div class="page-arrow">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </a>
+            </div>
+        </section>
 
         <footer class="footer">
             <p class="footer-text">
