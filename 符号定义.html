@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>符号定义可视化</title>
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --secondary-color: #10b981;
+            --accent-color: #f59e0b;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            color: #334155;
+        }
+
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 24px;
+            background-color: var(--primary-color);
+            margin-right: 10px;
+            border-radius: 3px;
+        }
+
+        .formula-box {
+            background-color: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', Courier, monospace;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        /* Token Visualization Styles */
+        .token-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin: 20px 0;
+            padding: 10px;
+        }
+
+        .token {
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            position: relative;
+            transition: transform 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .token:hover {
+            transform: translateY(-3px);
+            z-index: 10;
+        }
+
+        /* Token Types */
+        .token-prompt {
+            background-color: #dbeafe;
+            color: #1e40af;
+            border-color: #bfdbfe;
+        }
+
+        .token-generated {
+            background-color: #d1fae5;
+            color: #065f46;
+            border-color: #a7f3d0;
+        }
+
+        .token-pattern {
+            background-color: #fef3c7;
+            color: #92400e;
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 2px #f59e0b; /* Highlight effect */
+        }
+
+        /* Labels and Brackets */
+        .annotation-container {
+            position: relative;
+            margin-top: 5px;
+            height: 30px;
+            width: 100%;
+        }
+
+        .bracket-group {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .bracket-line {
+            width: 100%;
+            height: 8px;
+            border-left: 2px solid #94a3b8;
+            border-right: 2px solid #94a3b8;
+            border-bottom: 2px solid #94a3b8;
+            margin-bottom: 5px;
+        }
+        
+        /* Top bracket style */
+        .bracket-line-top {
+            width: 100%;
+            height: 8px;
+            border-left: 2px solid #f59e0b;
+            border-right: 2px solid #f59e0b;
+            border-top: 2px solid #f59e0b;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        .bracket-label {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .highlight-text {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        .description {
+            color: #475569;
+            line-height: 1.6;
+            margin-top: 10px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .token {
+                width: 35px;
+                height: 35px;
+                font-size: 0.75rem;
+            }
+            .annotation-container {
+                display: none; /* Hide complex brackets on mobile for simplicity */
+            }
+            .mobile-legend {
+                display: block;
+                margin-top: 10px;
+                font-size: 0.8rem;
+                color: #64748b;
+                text-align: center;
+            }
+        }
+        @media (min-width: 601px) {
+            .mobile-legend {
+                display: none;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            符号定义可视化
+        </div>
+        
+        <div class="content">
+            
+            <!-- Section 1: Full Sequence -->
+            <div class="section">
+                <div class="section-title">完整序列定义 (x<sub>1:t</sub>)</div>
+                <div class="formula-box">
+                    x<sub>1:t</sub> = 从第1个到第t个token的完整序列
+                </div>
+                
+                <div class="description">
+                    <p>例如 <strong>t = 10</strong>:</p>
+                </div>
+
+                <!-- Visualization for t=10 -->
+                <div style="position: relative; max-width: 600px; margin: 0 auto;">
+                    <div class="token-container" id="sequence-container">
+                        <!-- Prompt Tokens -->
+                        <div class="token token-prompt">x₁</div>
+                        <div class="token token-prompt">x₂</div>
+                        <div class="token token-prompt">x₃</div>
+                        <div class="token token-prompt">x₄</div>
+                        <div class="token token-prompt">x₅</div>
+                        <!-- Generated Tokens -->
+                        <div class="token token-generated">x₆</div>
+                        <div class="token token-generated">x₇</div>
+                        <div class="token token-generated">x₈</div>
+                        <div class="token token-generated">x₉</div>
+                        <div class="token token-generated">x₁₀</div>
+                    </div>
+
+                    <!-- Brackets/Annotations (Desktop) -->
+                    <div class="annotation-container">
+                        <!-- Prompt Bracket (spanning 5 tokens approx 50%) -->
+                        <div class="bracket-group" style="left: 2%; width: 46%;">
+                            <div class="bracket-line"></div>
+                            <span class="bracket-label">提示词 (Prompt)</span>
+                        </div>
+                        <!-- Generated Bracket (spanning 5 tokens approx 50%) -->
+                        <div class="bracket-group" style="left: 52%; width: 46%;">
+                            <div class="bracket-line"></div>
+                            <span class="bracket-label">已生成 (Generated)</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Mobile Legend -->
+                    <div class="mobile-legend">
+                        <span style="color: #1e40af">■ 提示词</span> &nbsp; 
+                        <span style="color: #065f46">■ 已生成</span>
+                    </div>
+                </div>
+            </div>
+
+            <hr style="border: 0; border-top: 1px dashed #cbd5e1; margin: 30px 0;">
+
+            <!-- Section 2: Pattern Sequence -->
+            <div class="section">
+                <div class="section-title">模式序列 (Pattern Sequence)</div>
+                <div class="formula-box">
+                    后缀 x<sub>t-p+1:t</sub> (长度为 p)
+                </div>
+
+                <div class="description">
+                    <p>假设 <strong>p = 3</strong>, <strong>t = 10</strong>:</p>
+                    <p>x<sub>10-3+1:10</sub> = x<sub>8:10</sub> = [x₈, x₉, x₁₀]</p>
+                    <p>这就是 <span class="highlight-text">"模式序列"</span>，即当前序列的最后 p 个 token。</p>
+                </div>
+
+                <!-- Visualization for Pattern -->
+                <div style="position: relative; max-width: 600px; margin: 0 auto;">
+                    
+                    <!-- Top Bracket for Pattern Highlight -->
+                    <div class="annotation-container" style="margin-bottom: 5px; height: 25px;">
+                         <div class="bracket-group" style="left: 72%; width: 26%;">
+                            <span class="bracket-label" style="color: #d97706;">模式序列 (p=3)</span>
+                            <div class="bracket-line-top"></div>
+                        </div>
+                    </div>
+
+                    <div class="token-container">
+                        <!-- Context Tokens (faded) -->
+                        <div class="token token-prompt" style="opacity: 0.4;">x₁</div>
+                        <div class="token token-prompt" style="opacity: 0.4;">x₂</div>
+                        <div class="token token-prompt" style="opacity: 0.4;">x₃</div>
+                        <div class="token token-prompt" style="opacity: 0.4;">x₄</div>
+                        <div class="token token-prompt" style="opacity: 0.4;">x₅</div>
+                        <div class="token token-generated" style="opacity: 0.4;">x₆</div>
+                        <div class="token token-generated" style="opacity: 0.4;">x₇</div>
+                        <!-- Pattern Tokens (Highlighted) -->
+                        <div class="token token-pattern">x₈</div>
+                        <div class="token token-pattern">x₉</div>
+                        <div class="token token-pattern">x₁₀</div>
+                    </div>
+                    
+                    <div class="mobile-legend">
+                        <span style="color: #d97706; font-weight: bold;">■ 模式序列 (最后3个)</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>
