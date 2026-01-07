@@ -12,9 +12,9 @@
         }
 
         body {
-            font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
-            background-color: #0f172a;
-            color: #e2e8f0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f0f4f8;
+            color: #1e293b;
             padding: 40px 20px;
             line-height: 1.6;
             min-height: 100vh;
@@ -30,25 +30,24 @@
 
         /* 主卡片 */
         .insight-card {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            background: white;
             border-radius: 16px;
             overflow: hidden;
-            border: 1px solid #334155;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
         }
 
         /* 标题区域 */
         .card-header {
-            background: linear-gradient(90deg, #38bdf8 0%, #818cf8 100%);
-            padding: 20px 28px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            padding: 24px 28px;
             text-align: center;
         }
 
         .card-title {
             font-size: 22px;
             font-weight: 700;
-            color: #0f172a;
-            letter-spacing: 4px;
+            color: #f8fafc;
+            letter-spacing: 2px;
         }
 
         /* 内容区域 */
@@ -58,8 +57,8 @@
 
         /* 核心公式区 */
         .core-formula {
-            background: rgba(56, 189, 248, 0.08);
-            border: 1px solid rgba(56, 189, 248, 0.3);
+            background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+            border: 1px solid #bfdbfe;
             border-radius: 12px;
             padding: 24px;
             margin-bottom: 24px;
@@ -67,7 +66,7 @@
 
         .formula-title {
             font-size: 15px;
-            color: #38bdf8;
+            color: #3b82f6;
             font-weight: 600;
             margin-bottom: 16px;
             display: flex;
@@ -81,13 +80,15 @@
 
         .formula-main {
             font-size: 16px;
-            color: #fbbf24;
+            font-family: 'Monaco', 'Menlo', monospace;
+            color: #1e293b;
             font-weight: 700;
             margin-bottom: 20px;
             padding: 12px 16px;
-            background: rgba(251, 191, 36, 0.1);
+            background: white;
             border-radius: 8px;
             text-align: center;
+            border: 1px solid #e2e8f0;
         }
 
         .formula-list {
@@ -96,7 +97,7 @@
 
         .formula-list li {
             padding: 8px 0;
-            color: #cbd5e1;
+            color: #475569;
             font-size: 14px;
             display: flex;
             align-items: flex-start;
@@ -105,7 +106,7 @@
 
         .formula-list li::before {
             content: '=';
-            color: #64748b;
+            color: #94a3b8;
             font-weight: bold;
             flex-shrink: 0;
         }
@@ -123,31 +124,31 @@
         }
 
         .flow-item {
-            background: #1e293b;
-            border: 1px solid #334155;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
             border-radius: 8px;
             padding: 12px 24px;
             font-size: 14px;
-            color: #f8fafc;
+            color: #1e293b;
             width: 100%;
             text-align: center;
             transition: all 0.3s ease;
         }
 
         .flow-item:hover {
-            border-color: #4ade80;
+            border-color: #10b981;
             transform: translateX(4px);
         }
 
         .flow-item.highlight {
-            background: linear-gradient(135deg, rgba(74, 222, 128, 0.15), rgba(56, 189, 248, 0.15));
-            border-color: #4ade80;
-            color: #4ade80;
+            background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+            border-color: #10b981;
+            color: #059669;
             font-weight: 600;
         }
 
         .flow-arrow {
-            color: #4ade80;
+            color: #10b981;
             font-size: 18px;
             animation: bounce 1.5s infinite;
         }
@@ -160,21 +161,21 @@
         /* 分隔线 */
         .divider {
             height: 1px;
-            background: linear-gradient(90deg, transparent, #334155, transparent);
+            background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
             margin: 24px 0;
         }
 
         /* 对比区域 */
         .comparison-section {
-            background: #0f172a;
+            background: #f8fafc;
             border-radius: 12px;
             padding: 20px;
-            border: 1px solid #1e293b;
+            border: 1px solid #e2e8f0;
         }
 
         .comparison-title {
             font-size: 13px;
-            color: #94a3b8;
+            color: #64748b;
             font-weight: 600;
             margin-bottom: 16px;
             text-transform: uppercase;
@@ -207,47 +208,47 @@
         }
 
         .comparison-icon.bad {
-            background: rgba(239, 68, 68, 0.2);
+            background: #fef2f2;
             color: #ef4444;
         }
 
         .comparison-icon.good {
-            background: rgba(74, 222, 128, 0.2);
-            color: #4ade80;
+            background: #ecfdf5;
+            color: #10b981;
         }
 
         .comparison-item.bad .comparison-text {
-            color: #94a3b8;
+            color: #64748b;
         }
 
         .comparison-item.good .comparison-text {
-            color: #4ade80;
+            color: #059669;
             font-weight: 600;
         }
 
         .comparison-text span {
-            color: #64748b;
+            color: #94a3b8;
             font-weight: normal;
         }
 
         /* 示例区域 */
         .examples-section {
-            background: rgba(129, 140, 248, 0.08);
-            border: 1px solid rgba(129, 140, 248, 0.2);
+            background: linear-gradient(135deg, #faf5ff 0%, #fdf4ff 100%);
+            border: 1px solid #e9d5ff;
             border-radius: 8px;
             padding: 16px;
         }
 
         .examples-title {
             font-size: 12px;
-            color: #818cf8;
+            color: #7c3aed;
             font-weight: 600;
             margin-bottom: 12px;
         }
 
         .example-item {
             font-size: 13px;
-            color: #cbd5e1;
+            color: #475569;
             padding: 8px 0;
             display: flex;
             align-items: flex-start;
@@ -256,31 +257,33 @@
 
         .example-item::before {
             content: '•';
-            color: #818cf8;
+            color: #7c3aed;
         }
 
         .example-condition {
-            color: #fbbf24;
+            color: #f59e0b;
+            font-weight: 600;
         }
 
         .example-arrow {
-            color: #64748b;
+            color: #94a3b8;
             margin: 0 4px;
         }
 
         .example-result {
-            color: #4ade80;
+            color: #10b981;
+            font-weight: 600;
         }
 
         /* 响应式 */
         @media (max-width: 500px) {
             .card-header {
-                padding: 16px 20px;
+                padding: 20px;
             }
 
             .card-title {
                 font-size: 18px;
-                letter-spacing: 2px;
+                letter-spacing: 1px;
             }
 
             .card-body {
@@ -367,4 +370,3 @@
     </div>
 </body>
 </html>
-
