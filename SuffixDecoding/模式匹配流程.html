@@ -13,180 +13,343 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background-color: #f5f5f5;
+            background-color: #f0f4f8;
             padding: 40px 20px;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
         .container {
-            max-width: 700px;
+            max-width: 800px;
             margin: 0 auto;
         }
 
+        /* 主卡片 */
+        .main-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        }
+
         .header {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             color: white;
             text-align: center;
-            padding: 20px 40px;
-            border-radius: 12px 12px 0 0;
+            padding: 24px 40px;
             font-size: 22px;
-            font-weight: 600;
+            font-weight: 700;
             letter-spacing: 2px;
         }
 
         .content {
-            background: white;
-            padding: 30px;
-            border-radius: 0 0 12px 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 28px;
         }
 
-        .section {
-            margin-bottom: 35px;
+        /* 两栏布局 */
+        .cases-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
         }
 
-        .section:last-child {
-            margin-bottom: 0;
+        @media (max-width: 700px) {
+            .cases-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
-        .section-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #1a1a2e;
-            margin-bottom: 16px;
+        /* 情况卡片 */
+        .case-card {
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid;
+        }
+
+        .case-card.fail {
+            border-color: #fca5a5;
+        }
+
+        .case-card.success {
+            border-color: #86efac;
+        }
+
+        .case-header {
+            padding: 14px 18px;
             display: flex;
             align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 15px;
         }
 
-        .section-title::before {
-            content: '';
-            display: inline-block;
-            width: 4px;
-            height: 18px;
-            background: #3b82f6;
-            margin-right: 10px;
-            border-radius: 2px;
+        .case-card.fail .case-header {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            color: #b91c1c;
         }
 
-        .section-title.orange::before {
-            background: #f59e0b;
+        .case-card.success .case-header {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            color: #15803d;
         }
 
-        .code-block {
-            background: #f8fafc;
-            border-left: 4px solid #f59e0b;
-            padding: 12px 16px;
-            border-radius: 0 6px 6px 0;
-            font-family: 'Monaco', 'Menlo', monospace;
-            font-size: 13px;
-            color: #334155;
-            margin-bottom: 16px;
+        .case-icon {
+            font-size: 18px;
         }
 
-        .diagram-box {
+        .case-body {
+            padding: 18px;
+            background: white;
+        }
+
+        /* 输入展示 */
+        .input-box {
             background: #f8fafc;
             border-radius: 8px;
-            padding: 16px 20px;
-            font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
-            font-size: 13px;
-            line-height: 1.6;
+            padding: 12px 14px;
+            margin-bottom: 14px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .input-label {
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .input-value {
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 12px;
             color: #334155;
-            margin-bottom: 16px;
-            white-space: pre;
+        }
+
+        /* 树形图 */
+        .tree-diagram {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 14px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #cbd5e1;
             overflow-x: auto;
         }
 
-        .highlight-orange {
-            color: #f59e0b;
+        .tree-diagram pre {
+            margin: 0;
+            white-space: pre;
+        }
+
+        .node-root {
+            color: #94a3b8;
+        }
+
+        .node-child {
+            color: #60a5fa;
+        }
+
+        .node-target {
+            color: #4ade80;
             font-weight: 600;
         }
 
-        .highlight-red {
-            color: #dc2626;
+        .node-fail {
+            color: #f87171;
         }
 
-        .info-box {
-            background: #fffbeb;
-            border: 1px solid #fcd34d;
+        .highlight-yellow {
+            color: #fbbf24;
+        }
+
+        .highlight-green {
+            color: #4ade80;
+        }
+
+        /* 步骤说明 */
+        .step-box {
+            background: #fefce8;
+            border: 1px solid #fde047;
             border-radius: 8px;
-            padding: 12px 16px;
+            padding: 10px 14px;
             margin-bottom: 12px;
+            font-size: 13px;
         }
 
-        .info-box.blue {
+        .step-box.blue {
             background: #eff6ff;
             border-color: #93c5fd;
         }
 
-        .info-label {
-            font-weight: 600;
-            color: #b45309;
-            font-size: 13px;
+        .step-label {
+            font-weight: 700;
             margin-bottom: 4px;
         }
 
-        .info-label.blue {
-            color: #1e40af;
+        .step-box .step-label {
+            color: #a16207;
         }
 
-        .info-text {
+        .step-box.blue .step-label {
+            color: #1d4ed8;
+        }
+
+        .step-text {
             color: #475569;
             font-size: 13px;
         }
 
-        .divider {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
-            margin: 30px 0;
+        /* 结果标签 */
+        .result-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .result-tag.fail {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        .result-tag.success {
+            background: #f0fdf4;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+
+        /* 底部说明 */
+        .footer-note {
+            margin-top: 24px;
+            background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+            border: 1px solid #e9d5ff;
+            border-radius: 12px;
+            padding: 18px 20px;
+        }
+
+        .footer-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #7c3aed;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-title::before {
+            content: '💡';
+        }
+
+        .footer-text {
+            font-size: 13px;
+            color: #5b21b6;
+            line-height: 1.7;
+        }
+
+        .footer-text code {
+            font-family: 'Monaco', 'Menlo', monospace;
+            background: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #7c3aed;
+            border: 1px solid #e9d5ff;
+        }
+
+        /* 候选节点指示 */
+        .candidate-arrow {
+            color: #fbbf24;
+            font-size: 11px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">模式匹配流程</div>
-        <div class="content">
-            <!-- 情况 A -->
-            <div class="section">
-                <div class="section-title">情况 A：模式未找到</div>
-                
-                <div class="diagram-box">模式序列 = ["weird", "unique", "pattern"]
+        <div class="main-card">
+            <div class="header">模式匹配流程</div>
+            <div class="content">
+                <!-- 两种情况并排 -->
+                <div class="cases-grid">
+                    <!-- 情况 A：未找到 -->
+                    <div class="case-card fail">
+                        <div class="case-header">
+                            <span class="case-icon">❌</span>
+                            <span>情况 A：模式未找到</span>
+                        </div>
+                        <div class="case-body">
+                            <div class="input-box">
+                                <div class="input-label">模式序列</div>
+                                <div class="input-value">["weird", "unique", "pattern"]</div>
+                            </div>
 
-       (root)
+                            <div class="tree-diagram">
+<pre>       <span class="node-root">(root)</span>
       /   |   \
-    ":"  "def" "return" ...
+    <span class="node-child">":"</span>  <span class="node-child">"def"</span>  <span class="node-child">"return"</span> ...
 
-第1步：找 "weird" → 不存在！<span class="highlight-red">❌</span></div>
+第1步：找 <span class="node-fail">"weird"</span> → 不存在！</pre>
+                            </div>
 
-                <div class="info-box">
-                    <div class="info-label">处理方式</div>
-                    <div class="info-text">回退到标准解码（逐token生成，无投机）</div>
+                            <div class="step-box">
+                                <div class="step-label">处理方式</div>
+                                <div class="step-text">回退到标准解码（逐 token 生成，无投机）</div>
+                            </div>
+
+                            <div class="result-tag fail">
+                                <span>⚠️</span>
+                                <span>当前模式在历史中从未出现过</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 情况 B：找到 -->
+                    <div class="case-card success">
+                        <div class="case-header">
+                            <span class="case-icon">✅</span>
+                            <span>情况 B：模式找到</span>
+                        </div>
+                        <div class="case-body">
+                            <div class="input-box">
+                                <div class="input-label">遍历结果</div>
+                                <div class="input-value">成功遍历 p 步后到达 Nₚ</div>
+                            </div>
+
+                            <div class="tree-diagram">
+<pre>        <span class="node-target">[Nₚ]</span>  <span class="highlight-yellow">← 到达的节点</span>
+     /   |   \
+   <span class="node-child">子1</span>  <span class="node-child">子2</span>  <span class="node-child">子3</span>   <span class="candidate-arrow">← 候选续写</span>
+    |    |    |
+   ...  ...  ...   <span class="candidate-arrow">← 下降路径</span></pre>
+                            </div>
+
+                            <div class="step-box blue">
+                                <div class="step-label">下降路径 (Descending Paths)</div>
+                                <div class="step-text">从 Nₚ 往下的所有可能路径，每条路径代表一个候选续写序列</div>
+                            </div>
+
+                            <div class="result-tag success">
+                                <span>🎯</span>
+                                <span>可以进行投机解码！</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="info-box blue">
-                    <div class="info-label blue">含义说明</div>
-                    <div class="info-text">当前模式在历史中从未出现过，无法预测</div>
-                </div>
-            </div>
-
-            <div class="divider"></div>
-
-            <!-- 情况 B -->
-            <div class="section">
-                <div class="section-title orange">情况 B：模式找到</div>
-                
-                <div class="code-block">成功遍历 p 步后到达某节点</div>
-
-                <div class="diagram-box">       到达的节点
-           |
-    ┌──────┼──────┐
-    ↓      ↓      ↓
-  子1    子2    子3     <span class="highlight-orange">← 这些就是候选续写</span>
-   |      |      |
-  ...    ...    ...     ← 每条下降路径 = 一个续写序列</div>
-
-                <div class="info-box blue">
-                    <div class="info-label blue">下降路径 (descending paths)</div>
-                    <div class="info-text">从当前节点往下的所有可能路径</div>
+                <!-- 底部说明 -->
+                <div class="footer-note">
+                    <div class="footer-title">关键理解</div>
+                    <div class="footer-text">
+                        模式匹配决定了是否能够进行投机解码：<br><br>
+                        • <strong>匹配成功</strong> → 到达节点 <code>Nₚ</code>，其子节点就是候选续写的起点<br>
+                        • <strong>匹配失败</strong> → 无法利用历史信息，回退到普通解码
+                    </div>
                 </div>
             </div>
         </div>

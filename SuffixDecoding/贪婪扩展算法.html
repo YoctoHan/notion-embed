@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>贪婪扩展算法步骤</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f0f4f8;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 750px;
+            margin: 0 auto;
+        }
+
+        /* 主卡片 */
+        .main-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            text-align: center;
+            padding: 24px 40px;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .content {
+            padding: 28px;
+        }
+
+        /* 初始状态 */
+        .init-section {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border: 1px solid #6ee7b7;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .init-section .section-title {
+            color: #047857;
+        }
+
+        .init-section .section-title::before {
+            content: '🚀';
+        }
+
+        .init-items {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .init-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+        }
+
+        .init-label {
+            color: #065f46;
+            min-width: 100px;
+        }
+
+        .init-value {
+            font-family: 'Monaco', 'Menlo', monospace;
+            background: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            color: #047857;
+            font-weight: 600;
+            font-size: 13px;
+            border: 1px solid #a7f3d0;
+        }
+
+        .init-note {
+            color: #065f46;
+            font-size: 12px;
+        }
+
+        /* 循环区域 */
+        .loop-section {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border: 2px solid #3b82f6;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .loop-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .loop-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1d4ed8;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .loop-title::before {
+            content: '🔄';
+        }
+
+        .loop-condition {
+            font-family: 'Monaco', 'Menlo', monospace;
+            background: #1d4ed8;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* 步骤列表 */
+        .steps-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            background: white;
+            border-radius: 10px;
+            padding: 14px 16px;
+            border: 1px solid #bfdbfe;
+            transition: all 0.2s ease;
+        }
+
+        .step-item:hover {
+            border-color: #3b82f6;
+            transform: translateX(4px);
+        }
+
+        .step-number {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-text {
+            font-size: 14px;
+            color: #1e293b;
+        }
+
+        .step-text code {
+            font-family: 'Monaco', 'Menlo', monospace;
+            background: #f1f5f9;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #3b82f6;
+            font-weight: 600;
+            border: 1px solid #e2e8f0;
+        }
+
+        .step-text .highlight {
+            color: #dc2626;
+            font-weight: 600;
+        }
+
+        .step-note {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        /* 返回值 */
+        .return-section {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 1px solid #f59e0b;
+            border-radius: 12px;
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .return-icon {
+            font-size: 24px;
+        }
+
+        .return-content {
+            flex: 1;
+        }
+
+        .return-label {
+            font-size: 12px;
+            color: #92400e;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .return-value {
+            font-size: 15px;
+            color: #78350f;
+            font-weight: 600;
+        }
+
+        .return-value code {
+            font-family: 'Monaco', 'Menlo', monospace;
+            background: white;
+            padding: 3px 10px;
+            border-radius: 6px;
+            color: #b45309;
+            border: 1px solid #fcd34d;
+        }
+
+        /* 伪代码展示 */
+        .pseudocode-section {
+            margin-top: 24px;
+            background: #1e293b;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .pseudocode-header {
+            background: #0f172a;
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #334155;
+        }
+
+        .pseudocode-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .pseudocode-dot.red { background: #ef4444; }
+        .pseudocode-dot.yellow { background: #f59e0b; }
+        .pseudocode-dot.green { background: #22c55e; }
+
+        .pseudocode-title {
+            color: #94a3b8;
+            font-size: 12px;
+            margin-left: 8px;
+            font-family: 'Monaco', 'Menlo', monospace;
+        }
+
+        .pseudocode-body {
+            padding: 18px 20px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 13px;
+            line-height: 1.8;
+            overflow-x: auto;
+        }
+
+        .pseudocode-body pre {
+            margin: 0;
+            color: #e2e8f0;
+        }
+
+        .code-keyword {
+            color: #c084fc;
+        }
+
+        .code-function {
+            color: #60a5fa;
+        }
+
+        .code-var {
+            color: #4ade80;
+        }
+
+        .code-comment {
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .code-operator {
+            color: #f472b6;
+        }
+
+        /* 响应式 */
+        @media (max-width: 500px) {
+            .header {
+                padding: 20px;
+                font-size: 18px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .step-item {
+                padding: 12px;
+            }
+
+            .loop-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="main-card">
+            <div class="header">贪婪扩展算法步骤</div>
+            <div class="content">
+                <!-- 初始状态 -->
+                <div class="init-section">
+                    <div class="section-title">初始状态</div>
+                    <div class="init-items">
+                        <div class="init-item">
+                            <span class="init-label">推测子树</span>
+                            <span class="init-value">T = {Nₚ}</span>
+                            <span class="init-note">只有起始节点</span>
+                        </div>
+                        <div class="init-item">
+                            <span class="init-label">子树大小</span>
+                            <span class="init-value">|T| = 1</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 循环 -->
+                <div class="loop-section">
+                    <div class="loop-header">
+                        <div class="loop-title">循环执行</div>
+                        <div class="loop-condition">while |T| &lt; MAX_SPEC</div>
+                    </div>
+
+                    <div class="steps-list">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <div class="step-text">找出 <code>T</code> 中所有<span class="highlight">叶节点</span></div>
+                                <div class="step-note">叶节点是推测树中没有子节点的节点</div>
+                            </div>
+                        </div>
+
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <div class="step-text">收集叶节点的所有子节点 → 候选集合 <code>S</code></div>
+                                <div class="step-note">这些是可能被加入推测树的节点</div>
+                            </div>
+                        </div>
+
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <div class="step-text">计算每个候选节点的 <code>D</code> 值</div>
+                                <div class="step-note">D = 从 Nₚ 到该节点的路径概率</div>
+                            </div>
+                        </div>
+
+                        <div class="step-item">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <div class="step-text">选择 D 值<span class="highlight">最大</span>的节点 <code>N*</code></div>
+                                <div class="step-note">贪婪策略：优先选择最可能被接受的</div>
+                            </div>
+                        </div>
+
+                        <div class="step-item">
+                            <div class="step-number">5</div>
+                            <div class="step-content">
+                                <div class="step-text">将 <code>N*</code> 加入推测树 <code>T</code></div>
+                            </div>
+                        </div>
+
+                        <div class="step-item">
+                            <div class="step-number">6</div>
+                            <div class="step-content">
+                                <div class="step-text">更新大小 <code>|T| += 1</code></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 返回值 -->
+                <div class="return-section">
+                    <div class="return-icon">📤</div>
+                    <div class="return-content">
+                        <div class="return-label">返回</div>
+                        <div class="return-value"><code>T</code> 作为最终的推测树</div>
+                    </div>
+                </div>
+
+                <!-- 伪代码 -->
+                <div class="pseudocode-section">
+                    <div class="pseudocode-header">
+                        <span class="pseudocode-dot red"></span>
+                        <span class="pseudocode-dot yellow"></span>
+                        <span class="pseudocode-dot green"></span>
+                        <span class="pseudocode-title">pseudocode</span>
+                    </div>
+                    <div class="pseudocode-body">
+<pre><span class="code-keyword">def</span> <span class="code-function">greedy_expand</span>(<span class="code-var">Np</span>, <span class="code-var">MAX_SPEC</span>):
+    <span class="code-var">T</span> <span class="code-operator">=</span> {<span class="code-var">Np</span>}
+    
+    <span class="code-keyword">while</span> <span class="code-function">len</span>(<span class="code-var">T</span>) <span class="code-operator">&lt;</span> <span class="code-var">MAX_SPEC</span>:
+        <span class="code-var">leaves</span> <span class="code-operator">=</span> <span class="code-function">get_leaves</span>(<span class="code-var">T</span>)
+        <span class="code-var">S</span> <span class="code-operator">=</span> <span class="code-function">get_children</span>(<span class="code-var">leaves</span>)  <span class="code-comment"># 候选集合</span>
+        
+        <span class="code-keyword">if</span> <span class="code-var">S</span> <span class="code-operator">==</span> ∅: <span class="code-keyword">break</span>  <span class="code-comment"># 无候选节点</span>
+        
+        <span class="code-var">N_star</span> <span class="code-operator">=</span> <span class="code-function">argmax</span>(<span class="code-var">D</span>(<span class="code-var">n</span>) <span class="code-keyword">for</span> <span class="code-var">n</span> <span class="code-keyword">in</span> <span class="code-var">S</span>)
+        <span class="code-var">T</span>.<span class="code-function">add</span>(<span class="code-var">N_star</span>)
+    
+    <span class="code-keyword">return</span> <span class="code-var">T</span></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
