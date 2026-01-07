@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>贪婪扩展算法示例</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* 标题 */
+        .main-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .main-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #38bdf8;
+            margin-bottom: 8px;
+        }
+
+        .main-subtitle {
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        /* 初始树结构 */
+        .initial-tree {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid #334155;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #94a3b8;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 16px;
+            background: #38bdf8;
+            border-radius: 2px;
+        }
+
+        .tree-diagram {
+            font-size: 13px;
+            line-height: 1.4;
+            color: #cbd5e1;
+        }
+
+        .tree-diagram pre {
+            margin: 0;
+            overflow-x: auto;
+        }
+
+        .node-in-tree {
+            color: #4ade80;
+            font-weight: bold;
+        }
+
+        .node-candidate {
+            color: #fbbf24;
+        }
+
+        .node-excluded {
+            color: #64748b;
+        }
+
+        .count-label {
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        /* 步骤卡片 */
+        .step-card {
+            background: #1e293b;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            border: 1px solid #334155;
+        }
+
+        .step-header {
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #334155;
+        }
+
+        .step-header.no-border {
+            border-bottom: none;
+        }
+
+        .step-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #f8fafc;
+        }
+
+        .step-badge {
+            background: #334155;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .step-badge.complete {
+            background: #4ade80;
+            color: #0f172a;
+        }
+
+        .step-content {
+            padding: 20px;
+        }
+
+        /* 树形图区域 */
+        .tree-section {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid #1e293b;
+        }
+
+        .tree-section pre {
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /* 信息行 */
+        .info-row {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .info-item {
+            font-size: 13px;
+        }
+
+        .info-label {
+            color: #64748b;
+        }
+
+        .info-value {
+            color: #38bdf8;
+        }
+
+        /* D值计算表格 */
+        .calc-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            margin-bottom: 16px;
+        }
+
+        .calc-table th {
+            text-align: left;
+            padding: 10px 12px;
+            background: #0f172a;
+            color: #94a3b8;
+            font-weight: 600;
+            border-bottom: 1px solid #334155;
+        }
+
+        .calc-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        .calc-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .calc-table .node-col {
+            color: #f8fafc;
+            font-weight: 600;
+        }
+
+        .calc-table .formula-col {
+            color: #94a3b8;
+        }
+
+        .calc-table .result-col {
+            color: #fbbf24;
+            font-weight: 600;
+        }
+
+        .calc-table tr.selected {
+            background: rgba(74, 222, 128, 0.1);
+        }
+
+        .calc-table tr.selected .result-col {
+            color: #4ade80;
+        }
+
+        .selected-badge {
+            display: inline-block;
+            background: #4ade80;
+            color: #0f172a;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-left: 8px;
+        }
+
+        /* 选择结果 */
+        .selection-result {
+            background: linear-gradient(135deg, rgba(74, 222, 128, 0.1), rgba(56, 189, 248, 0.1));
+            border: 1px solid #4ade80;
+            border-radius: 8px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .selection-icon {
+            width: 32px;
+            height: 32px;
+            background: #4ade80;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0f172a;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .selection-text {
+            font-size: 14px;
+            color: #4ade80;
+        }
+
+        .selection-text strong {
+            color: #f8fafc;
+        }
+
+        /* 最终结果 */
+        .final-result {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border-radius: 12px;
+            padding: 24px;
+            border: 2px solid #4ade80;
+        }
+
+        .final-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .final-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #4ade80;
+            margin-bottom: 4px;
+        }
+
+        .final-subtitle {
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .final-tree {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .final-tree pre {
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .paths-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 600px) {
+            .paths-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .path-card {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 16px;
+            border: 1px solid #334155;
+        }
+
+        .path-card.included {
+            border-color: #4ade80;
+        }
+
+        .path-card.excluded {
+            border-color: #64748b;
+        }
+
+        .path-title {
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .path-card.included .path-title {
+            color: #4ade80;
+        }
+
+        .path-card.excluded .path-title {
+            color: #64748b;
+        }
+
+        .path-item {
+            font-size: 13px;
+            padding: 6px 0;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        .path-item:last-child {
+            border-bottom: none;
+        }
+
+        .path-name {
+            color: #f8fafc;
+        }
+
+        .path-card.included .path-value {
+            color: #4ade80;
+        }
+
+        .path-card.excluded .path-value {
+            color: #64748b;
+        }
+
+        /* 动画 */
+        .step-card {
+            transition: transform 0.2s;
+        }
+
+        .step-card:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 标题 -->
+        <div class="main-header">
+            <div class="main-title">贪婪扩展算法示例</div>
+            <div class="main-subtitle">MAX_SPEC = 5</div>
+        </div>
+
+        <!-- 初始树结构 -->
+        <div class="initial-tree">
+            <div class="section-title">后缀树结构</div>
+            <div class="tree-diagram">
+<pre>         Np <span class="count-label">(COUNT=100)</span>
+        /  |  \
+       A   B   C
+      <span class="count-label">60  30  10        ← COUNT值</span>
+      / \   |
+     D   E  F
+    <span class="count-label">40  20  30</span></pre>
+            </div>
+        </div>
+
+        <!-- 步骤 0 -->
+        <div class="step-card">
+            <div class="step-header">
+                <div class="step-title">步骤 0</div>
+                <div class="step-badge">T = {Np}, |T| = 1</div>
+            </div>
+            <div class="step-content">
+                <div class="tree-section">
+<pre>         <span class="node-in-tree">[Np]</span>    <span class="count-label">← 方括号表示在推测树中</span>
+        /  |  \
+       <span class="node-candidate">A   B   C</span>   <span class="count-label">← 候选节点</span></pre>
+                </div>
+
+                <table class="calc-table">
+                    <thead>
+                        <tr>
+                            <th>节点</th>
+                            <th>C 值计算</th>
+                            <th>D 值计算</th>
+                            <th>结果</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="selected">
+                            <td class="node-col">A</td>
+                            <td class="formula-col">60/(60+30+10) = 0.6</td>
+                            <td class="formula-col">1 × 0.6</td>
+                            <td class="result-col">0.6 <span class="selected-badge">MAX</span></td>
+                        </tr>
+                        <tr>
+                            <td class="node-col">B</td>
+                            <td class="formula-col">30/100 = 0.3</td>
+                            <td class="formula-col">1 × 0.3</td>
+                            <td class="result-col">0.3</td>
+                        </tr>
+                        <tr>
+                            <td class="node-col">C</td>
+                            <td class="formula-col">10/100 = 0.1</td>
+                            <td class="formula-col">1 × 0.1</td>
+                            <td class="result-col">0.1</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="selection-result">
+                    <div class="selection-icon">✓</div>
+                    <div class="selection-text">选择 D 值最大的节点: <strong>A (D=0.6)</strong></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 步骤 1 -->
+        <div class="step-card">
+            <div class="step-header">
+                <div class="step-title">步骤 1</div>
+                <div class="step-badge">T = {Np, A}, |T| = 2</div>
+            </div>
+            <div class="step-content">
+                <div class="tree-section">
+<pre>         <span class="node-in-tree">[Np]</span>
+        /  |  \
+      <span class="node-in-tree">[A]</span>  <span class="node-candidate">B   C</span>
+      / \          <span class="count-label">← A 的子节点成为新候选</span>
+     <span class="node-candidate">D   E</span></pre>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-item">
+                        <span class="info-label">叶节点: </span>
+                        <span class="info-value">{A}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">候选节点: </span>
+                        <span class="info-value">{B, C, D, E}</span>
+                    </div>
+                </div>
+
+                <table class="calc-table">
+                    <thead>
+                        <tr>
+                            <th>节点</th>
+                            <th>C 值计算</th>
+                            <th>D 值计算</th>
+                            <th>结果</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="node-col">B</td>
+                            <td class="formula-col">—</td>
+                            <td class="formula-col">—</td>
+                            <td class="result-col">0.3</td>
+                        </tr>
+                        <tr>
+                            <td class="node-col">C</td>
+                            <td class="formula-col">—</td>
+                            <td class="formula-col">—</td>
+                            <td class="result-col">0.1</td>
+                        </tr>
+                        <tr class="selected">
+                            <td class="node-col">D</td>
+                            <td class="formula-col">40/(40+20) = 0.67</td>
+                            <td class="formula-col">0.6 × 0.67</td>
+                            <td class="result-col">0.4 <span class="selected-badge">MAX</span></td>
+                        </tr>
+                        <tr>
+                            <td class="node-col">E</td>
+                            <td class="formula-col">20/60 = 0.33</td>
+                            <td class="formula-col">0.6 × 0.33</td>
+                            <td class="result-col">0.2</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="selection-result">
+                    <div class="selection-icon">✓</div>
+                    <div class="selection-text">选择 D 值最大的节点: <strong>D (D=0.4)</strong></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 步骤 2 -->
+        <div class="step-card">
+            <div class="step-header">
+                <div class="step-title">步骤 2</div>
+                <div class="step-badge">T = {Np, A, D}, |T| = 3</div>
+            </div>
+            <div class="step-content">
+                <div class="tree-section">
+<pre>         <span class="node-in-tree">[Np]</span>
+        /  |  \
+      <span class="node-in-tree">[A]</span>  <span class="node-candidate">B   C</span>
+      / \
+    <span class="node-in-tree">[D]</span>  <span class="node-candidate">E</span></pre>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-item">
+                        <span class="info-label">叶节点: </span>
+                        <span class="info-value">{D}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">候选节点: </span>
+                        <span class="info-value">{B, C, E}</span>
+                    </div>
+                </div>
+
+                <table class="calc-table">
+                    <thead>
+                        <tr>
+                            <th>节点</th>
+                            <th>D 值</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="selected">
+                            <td class="node-col">B</td>
+                            <td class="result-col">0.3 <span class="selected-badge">MAX</span></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="node-col">C</td>
+                            <td class="result-col">0.1</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="node-col">E</td>
+                            <td class="result-col">0.2</td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="selection-result">
+                    <div class="selection-icon">✓</div>
+                    <div class="selection-text">选择 D 值最大的节点: <strong>B (D=0.3)</strong></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 步骤 3 -->
+        <div class="step-card">
+            <div class="step-header">
+                <div class="step-title">步骤 3</div>
+                <div class="step-badge">T = {Np, A, D, B}, |T| = 4</div>
+            </div>
+            <div class="step-content">
+                <div class="tree-section">
+<pre>         <span class="node-in-tree">[Np]</span>
+        /  |   \
+      <span class="node-in-tree">[A]</span> <span class="node-in-tree">[B]</span>  <span class="node-candidate">C</span>
+      / \  |
+    <span class="node-in-tree">[D]</span>  <span class="node-candidate">E</span> <span class="node-candidate">F</span>   <span class="count-label">← B 的子节点 F 成为候选</span></pre>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-item">
+                        <span class="info-label">叶节点: </span>
+                        <span class="info-value">{D, B}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">候选节点: </span>
+                        <span class="info-value">{C, E, F}</span>
+                    </div>
+                </div>
+
+                <table class="calc-table">
+                    <thead>
+                        <tr>
+                            <th>节点</th>
+                            <th>C 值计算</th>
+                            <th>D 值计算</th>
+                            <th>结果</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="node-col">C</td>
+                            <td class="formula-col">—</td>
+                            <td class="formula-col">—</td>
+                            <td class="result-col">0.1</td>
+                        </tr>
+                        <tr>
+                            <td class="node-col">E</td>
+                            <td class="formula-col">—</td>
+                            <td class="formula-col">—</td>
+                            <td class="result-col">0.2</td>
+                        </tr>
+                        <tr class="selected">
+                            <td class="node-col">F</td>
+                            <td class="formula-col">30/30 = 1.0</td>
+                            <td class="formula-col">0.3 × 1.0</td>
+                            <td class="result-col">0.3 <span class="selected-badge">MAX</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="selection-result">
+                    <div class="selection-icon">✓</div>
+                    <div class="selection-text">选择 D 值最大的节点: <strong>F (D=0.3)</strong></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 步骤 4 - 终止 -->
+        <div class="step-card">
+            <div class="step-header no-border">
+                <div class="step-title">步骤 4</div>
+                <div class="step-badge complete">T = {Np, A, D, B, F}, |T| = 5 = MAX_SPEC ✓</div>
+            </div>
+        </div>
+
+        <!-- 最终结果 -->
+        <div class="final-result">
+            <div class="final-header">
+                <div class="final-title">最终推测树</div>
+                <div class="final-subtitle">算法终止，达到 MAX_SPEC 限制</div>
+            </div>
+
+            <div class="final-tree">
+<pre>      <span class="node-in-tree">[Np]</span>
+      /  \
+   <span class="node-in-tree">[A]</span>  <span class="node-in-tree">[B]</span>
+   /      \
+<span class="node-in-tree">[D]</span>      <span class="node-in-tree">[F]</span></pre>
+            </div>
+
+            <div class="paths-section">
+                <div class="path-card included">
+                    <div class="path-title">
+                        <span>✓</span>
+                        <span>选择的路径</span>
+                    </div>
+                    <div class="path-item">
+                        <span class="path-name">Np → A → D</span>
+                        <span class="path-value">D=0.4</span>
+                    </div>
+                    <div class="path-item">
+                        <span class="path-name">Np → B → F</span>
+                        <span class="path-value">D=0.3</span>
+                    </div>
+                </div>
+
+                <div class="path-card excluded">
+                    <div class="path-title">
+                        <span>✗</span>
+                        <span>被排除的节点</span>
+                    </div>
+                    <div class="path-item">
+                        <span class="path-name">C</span>
+                        <span class="path-value">D=0.1 太低</span>
+                    </div>
+                    <div class="path-item">
+                        <span class="path-name">E</span>
+                        <span class="path-value">D=0.2 不够高</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

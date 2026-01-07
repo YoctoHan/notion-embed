@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D(N) 路径概率递归定义</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f0f4f8;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        /* 公式区域 */
+        .formula-section {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            padding: 36px 32px;
+            text-align: center;
+        }
+
+        .formula-box {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 28px 36px;
+            display: inline-block;
+        }
+
+        .formula-box .katex {
+            font-size: 1.3em;
+            color: white;
+        }
+
+        /* 递归说明区域 */
+        .recursive-section {
+            background: linear-gradient(135deg, #fef3c7 0%, #fef9c3 100%);
+            padding: 24px 28px;
+            border-bottom: 1px solid #fcd34d;
+        }
+
+        .recursive-badge {
+            display: inline-flex;
+            align-items: center;
+            background: #f59e0b;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 16px;
+        }
+
+        .recursive-badge::before {
+            content: '🔄';
+            margin-right: 6px;
+        }
+
+        .case-box {
+            background: white;
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            border-left: 4px solid;
+        }
+
+        .case-box.base {
+            border-left-color: #10b981;
+        }
+
+        .case-box.recursive {
+            border-left-color: #3b82f6;
+        }
+
+        .case-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .case-box.base .case-label {
+            color: #10b981;
+        }
+
+        .case-box.recursive .case-label {
+            color: #3b82f6;
+        }
+
+        .case-formula {
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+            color: #1e293b;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .case-desc {
+            font-size: 13px;
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        /* 直观理解区域 */
+        .intuition-section {
+            padding: 28px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title::before {
+            content: '💡';
+            margin-right: 8px;
+            font-size: 16px;
+        }
+
+        /* 树形图 */
+        .tree-container {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .tree-svg {
+            width: 100%;
+            max-width: 360px;
+            height: auto;
+        }
+
+        /* 解释框 */
+        .explanation-box {
+            background: linear-gradient(135deg, #ede9fe 0%, #f5f3ff 100%);
+            border: 1px solid #c4b5fd;
+            border-radius: 10px;
+            padding: 18px 22px;
+        }
+
+        .explanation-title {
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+            font-weight: 600;
+            color: #7c3aed;
+            margin-bottom: 10px;
+        }
+
+        .explanation-text {
+            font-size: 14px;
+            color: #4c1d95;
+            line-height: 1.7;
+        }
+
+        .explanation-text .highlight {
+            background: #7c3aed;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .final-note {
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px dashed #c4b5fd;
+            font-size: 13px;
+            color: #6d28d9;
+        }
+
+        .final-note::before {
+            content: '=';
+            margin-right: 6px;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <!-- 公式 -->
+            <div class="formula-section">
+                <div class="formula-box">
+                    <span class="latex" data-formula="D(N) = \begin{cases} D(\text{PARENT}(N)) \times C(N), & \text{if } N \neq N_p \\ 1, & \text{otherwise } (N = N_p) \end{cases}"></span>
+                </div>
+            </div>
+
+            <!-- 递归说明 -->
+            <div class="recursive-section">
+                <div class="recursive-badge">这是一个递归定义！</div>
+                
+                <div class="case-box base">
+                    <div class="case-label">基础情况 Base Case</div>
+                    <div class="case-formula">D(Nₚ) = 1</div>
+                    <div class="case-desc">Nₚ 是起点（模式匹配后到达的节点），概率为 1</div>
+                </div>
+
+                <div class="case-box recursive">
+                    <div class="case-label">递归情况 Recursive Case</div>
+                    <div class="case-formula">D(N) = D(父节点) × C(N)</div>
+                    <div class="case-desc">
+                        = 到达父节点的概率 × 从父节点转移到 N 的概率<br>
+                        = 从 Nₚ 一路走到 N 的概率（路径概率的乘积）
+                    </div>
+                </div>
+            </div>
+
+            <!-- 直观理解 -->
+            <div class="intuition-section">
+                <div class="section-title">直观理解</div>
+
+                <!-- 树形图 -->
+                <div class="tree-container">
+                    <svg class="tree-svg" viewBox="0 0 360 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Np 节点 -->
+                        <rect x="140" y="10" width="80" height="44" rx="10" fill="#10b981"/>
+                        <text x="180" y="30" font-size="13" fill="white" text-anchor="middle" font-weight="700" font-family="Monaco, Menlo, monospace">Nₚ</text>
+                        <text x="180" y="46" font-size="10" fill="#d1fae5" text-anchor="middle" font-family="Monaco, Menlo, monospace">D = 1</text>
+
+                        <!-- 连接线 Np -> A, B -->
+                        <path d="M160 54 L90 95" stroke="#94a3b8" stroke-width="2.5"/>
+                        <path d="M200 54 L270 95" stroke="#94a3b8" stroke-width="2.5"/>
+
+                        <!-- A 节点 -->
+                        <rect x="50" y="95" width="80" height="58" rx="10" fill="#3b82f6"/>
+                        <text x="90" y="115" font-size="14" fill="white" text-anchor="middle" font-weight="700" font-family="Monaco, Menlo, monospace">A</text>
+                        <text x="90" y="131" font-size="10" fill="#bfdbfe" text-anchor="middle" font-family="Monaco, Menlo, monospace">C = 0.7</text>
+                        <text x="90" y="145" font-size="10" fill="#93c5fd" text-anchor="middle" font-weight="600" font-family="Monaco, Menlo, monospace">D = 0.7</text>
+
+                        <!-- B 节点 -->
+                        <rect x="230" y="95" width="80" height="58" rx="10" fill="#f59e0b"/>
+                        <text x="270" y="115" font-size="14" fill="white" text-anchor="middle" font-weight="700" font-family="Monaco, Menlo, monospace">B</text>
+                        <text x="270" y="131" font-size="10" fill="#fef3c7" text-anchor="middle" font-family="Monaco, Menlo, monospace">C = 0.3</text>
+                        <text x="270" y="145" font-size="10" fill="#fcd34d" text-anchor="middle" font-weight="600" font-family="Monaco, Menlo, monospace">D = 0.3</text>
+
+                        <!-- 连接线 A -> C, B -> D -->
+                        <path d="M90 153 L90 195" stroke="#94a3b8" stroke-width="2.5"/>
+                        <path d="M270 153 L270 195" stroke="#94a3b8" stroke-width="2.5"/>
+
+                        <!-- C 节点 -->
+                        <rect x="50" y="195" width="80" height="58" rx="10" fill="#8b5cf6"/>
+                        <text x="90" y="215" font-size="14" fill="white" text-anchor="middle" font-weight="700" font-family="Monaco, Menlo, monospace">C</text>
+                        <text x="90" y="231" font-size="10" fill="#e9d5ff" text-anchor="middle" font-family="Monaco, Menlo, monospace">C = 0.6</text>
+                        <text x="90" y="245" font-size="10" fill="#c4b5fd" text-anchor="middle" font-weight="600" font-family="Monaco, Menlo, monospace">D = 0.42</text>
+
+                        <!-- D 节点 -->
+                        <rect x="230" y="195" width="80" height="58" rx="10" fill="#ec4899"/>
+                        <text x="270" y="215" font-size="14" fill="white" text-anchor="middle" font-weight="700" font-family="Monaco, Menlo, monospace">D</text>
+                        <text x="270" y="231" font-size="10" fill="#fce7f3" text-anchor="middle" font-family="Monaco, Menlo, monospace">C = 0.8</text>
+                        <text x="270" y="245" font-size="10" fill="#f9a8d4" text-anchor="middle" font-weight="600" font-family="Monaco, Menlo, monospace">D = 0.24</text>
+
+                        <!-- 计算标注 -->
+                        <text x="90" y="272" font-size="10" fill="#6b7280" text-anchor="middle" font-family="Monaco, Menlo, monospace">↑ 0.7 × 0.6</text>
+                        <text x="270" y="272" font-size="10" fill="#6b7280" text-anchor="middle" font-family="Monaco, Menlo, monospace">↑ 0.3 × 0.8</text>
+                    </svg>
+                </div>
+
+                <!-- 解释 -->
+                <div class="explanation-box">
+                    <div class="explanation-title">D(C) = 0.42 意味着：</div>
+                    <div class="explanation-text">
+                        "从 Nₚ 开始，经过 A，最终到达 C 的概率是 <span class="highlight">42%</span>"
+                    </div>
+                    <div class="final-note">
+                        TOKEN(C) 被投机验证接受的估计概率
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.latex').forEach(el => {
+            const formula = el.getAttribute('data-formula');
+            katex.render(formula, el, { throwOnError: false, displayMode: true });
+        });
+    </script>
+</body>
+</html>

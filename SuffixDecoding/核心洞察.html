@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>核心洞察 - D值贪婪策略</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            padding: 40px 20px;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 720px;
+            width: 100%;
+        }
+
+        /* 主卡片 */
+        .insight-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid #334155;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* 标题区域 */
+        .card-header {
+            background: linear-gradient(90deg, #38bdf8 0%, #818cf8 100%);
+            padding: 20px 28px;
+            text-align: center;
+        }
+
+        .card-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #0f172a;
+            letter-spacing: 4px;
+        }
+
+        /* 内容区域 */
+        .card-body {
+            padding: 28px;
+        }
+
+        /* 核心公式区 */
+        .core-formula {
+            background: rgba(56, 189, 248, 0.08);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .formula-title {
+            font-size: 15px;
+            color: #38bdf8;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .formula-title::before {
+            content: '⚡';
+        }
+
+        .formula-main {
+            font-size: 16px;
+            color: #fbbf24;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding: 12px 16px;
+            background: rgba(251, 191, 36, 0.1);
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .formula-list {
+            list-style: none;
+        }
+
+        .formula-list li {
+            padding: 8px 0;
+            color: #cbd5e1;
+            font-size: 14px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .formula-list li::before {
+            content: '=';
+            color: #64748b;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        /* 推导流程 */
+        .flow-section {
+            margin-bottom: 24px;
+        }
+
+        .flow-chain {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .flow-item {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 14px;
+            color: #f8fafc;
+            width: 100%;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .flow-item:hover {
+            border-color: #4ade80;
+            transform: translateX(4px);
+        }
+
+        .flow-item.highlight {
+            background: linear-gradient(135deg, rgba(74, 222, 128, 0.15), rgba(56, 189, 248, 0.15));
+            border-color: #4ade80;
+            color: #4ade80;
+            font-weight: 600;
+        }
+
+        .flow-arrow {
+            color: #4ade80;
+            font-size: 18px;
+            animation: bounce 1.5s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(3px); }
+        }
+
+        /* 分隔线 */
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #334155, transparent);
+            margin: 24px 0;
+        }
+
+        /* 对比区域 */
+        .comparison-section {
+            background: #0f172a;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #1e293b;
+        }
+
+        .comparison-title {
+            font-size: 13px;
+            color: #94a3b8;
+            font-weight: 600;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .comparison-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .comparison-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+        }
+
+        .comparison-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .comparison-icon.bad {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .comparison-icon.good {
+            background: rgba(74, 222, 128, 0.2);
+            color: #4ade80;
+        }
+
+        .comparison-item.bad .comparison-text {
+            color: #94a3b8;
+        }
+
+        .comparison-item.good .comparison-text {
+            color: #4ade80;
+            font-weight: 600;
+        }
+
+        .comparison-text span {
+            color: #64748b;
+            font-weight: normal;
+        }
+
+        /* 示例区域 */
+        .examples-section {
+            background: rgba(129, 140, 248, 0.08);
+            border: 1px solid rgba(129, 140, 248, 0.2);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .examples-title {
+            font-size: 12px;
+            color: #818cf8;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .example-item {
+            font-size: 13px;
+            color: #cbd5e1;
+            padding: 8px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .example-item::before {
+            content: '•';
+            color: #818cf8;
+        }
+
+        .example-condition {
+            color: #fbbf24;
+        }
+
+        .example-arrow {
+            color: #64748b;
+            margin: 0 4px;
+        }
+
+        .example-result {
+            color: #4ade80;
+        }
+
+        /* 响应式 */
+        @media (max-width: 500px) {
+            .card-header {
+                padding: 16px 20px;
+            }
+
+            .card-title {
+                font-size: 18px;
+                letter-spacing: 2px;
+            }
+
+            .card-body {
+                padding: 20px;
+            }
+
+            .formula-main {
+                font-size: 14px;
+            }
+
+            .flow-item {
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="insight-card">
+            <!-- 标题 -->
+            <div class="card-header">
+                <div class="card-title">核心洞察</div>
+            </div>
+
+            <div class="card-body">
+                <!-- 核心公式 -->
+                <div class="core-formula">
+                    <div class="formula-title">投机解码的收益 = 正确预测的 token 数量</div>
+                    
+                    <div class="formula-main">D(N) = 从起点到 N 的路径概率</div>
+                    
+                    <ul class="formula-list">
+                        <li>N 被验证接受的估计概率</li>
+                        <li>N 对总收益的期望贡献</li>
+                    </ul>
+                </div>
+
+                <!-- 推导流程 -->
+                <div class="flow-section">
+                    <div class="flow-chain">
+                        <div class="flow-item">贪婪选择 D 最大的节点</div>
+                        <div class="flow-arrow">↓</div>
+                        <div class="flow-item">优先扩展"最可能被接受"的分支</div>
+                        <div class="flow-arrow">↓</div>
+                        <div class="flow-item highlight">在有限预算 (MAX_SPEC) 下最大化期望收益</div>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <!-- 策略对比 -->
+                <div class="comparison-section">
+                    <div class="comparison-title">对比其他策略</div>
+                    
+                    <div class="comparison-list">
+                        <div class="comparison-item bad">
+                            <div class="comparison-icon bad">✗</div>
+                            <div class="comparison-text">广度优先 <span>— 可能包含很多低概率分支</span></div>
+                        </div>
+                        <div class="comparison-item bad">
+                            <div class="comparison-icon bad">✗</div>
+                            <div class="comparison-text">深度优先 <span>— 可能过度投资一条路径</span></div>
+                        </div>
+                        <div class="comparison-item good">
+                            <div class="comparison-icon good">✓</div>
+                            <div class="comparison-text">D值贪婪 <span>— 动态平衡深度和广度</span></div>
+                        </div>
+                    </div>
+
+                    <!-- 示例说明 -->
+                    <div class="examples-section">
+                        <div class="examples-title">例如：</div>
+                        <div class="example-item">
+                            <span>如果最高 D 在<span class="example-condition">深层</span><span class="example-arrow">→</span><span class="example-result">继续延伸当前路径</span></span>
+                        </div>
+                        <div class="example-item">
+                            <span>如果最高 D 在<span class="example-condition">浅层新分支</span><span class="example-arrow">→</span><span class="example-result">开始探索新分支</span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
